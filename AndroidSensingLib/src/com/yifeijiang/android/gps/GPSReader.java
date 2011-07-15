@@ -10,7 +10,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.Settings;
 
-public class GPSReader implements LocationListener{
+public class GPSReader implements LocationListener,  GpsStatus.Listener{
 
 	public static String STATUS = "OFF";
 	
@@ -115,31 +115,24 @@ public class GPSReader implements LocationListener{
 		// TODO Auto-generated method stub
 		
 	}
-}
 
-
-/*////
-    private GpsStatus.Listener gpsListener = new GpsStatus.Listener() {
-        public void onGpsStatusChanged(int event) {
-            String state = "";
-            switch (event) {
-                case GpsStatus.GPS_EVENT_STARTED:  
-                    state = "GPS_EVENT_STARTED"; 
-                    break;
-                case GpsStatus.GPS_EVENT_STOPPED:  
-                    state = "GPS_EVENT_STOPPED";
-                    break;
-                case GpsStatus.GPS_EVENT_FIRST_FIX:  
-                    state = "GpsStatus.GPS_EVENT_FIRST_FIX";
-                    break;
-                case GpsStatus.GPS_EVENT_SATELLITE_STATUS:  
-                    state = "GPS_EVENT_SATELLITE_STATUS"; 
-                    break;
-            }
-            
-            //Log.d("GPS Listner", "GPS status: " + state);
-            String s = "\"GPS_STATUS\":\""+ state + "\"";
-
+	@Override
+	public void onGpsStatusChanged(int event) {
+		// TODO Auto-generated method stub
+        String state = "";
+        switch (event) {
+            case GpsStatus.GPS_EVENT_STARTED:  
+                state = "GPS_EVENT_STARTED"; 
+                break;
+            case GpsStatus.GPS_EVENT_STOPPED:  
+                state = "GPS_EVENT_STOPPED";
+                break;
+            case GpsStatus.GPS_EVENT_FIRST_FIX:  
+                state = "GpsStatus.GPS_EVENT_FIRST_FIX";
+                break;
+            case GpsStatus.GPS_EVENT_SATELLITE_STATUS:  
+                state = "GPS_EVENT_SATELLITE_STATUS"; 
+                break;
         }
-    };
-///*/
+	}
+}
