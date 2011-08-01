@@ -1,5 +1,6 @@
 package com.yifeijiang.android.datetime;
 
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
 import com.yifeijiang.android.R;
@@ -120,6 +121,11 @@ public class DateTimePicker extends RelativeLayout implements View.OnClickListen
                 return mCalendar.getTimeInMillis();
         }
 
+        public String getDateTime(){
+        	SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+			return sdf.format(mCalendar.getTime());
+        	
+        }
         // Convenience wrapper for internal TimePicker instance
         public void setIs24HourView(boolean is24HourView) {
                 timePicker.setIs24HourView(is24HourView);
