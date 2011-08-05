@@ -35,7 +35,7 @@ public class ExtFileLogger {
     }
     
     
-    public void writeExtFile(String s, String FILENAME){
+    public synchronized void writeExtFile(String s, String FILENAME){
     	if (!isExtStorageWritable(Path))
     		return;
     	
