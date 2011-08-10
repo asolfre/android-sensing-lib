@@ -3,10 +3,10 @@
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="src" path="gen"/>
 	<classpathentry kind="con" path="com.android.ide.eclipse.adt.ANDROID_FRAMEWORK"/>
-	<classpathentry kind="lib" path="/mydata/android/workspace/AndroidSensingLib/libs/Androidplot-core-0.4.3-release.jar"/>
-	<classpathentry kind="lib" path="/mydata/android/workspace/AndroidSensingLib/libs/httpclient-4.1.jar"/>
-	<classpathentry kind="lib" path="/mydata/android/workspace/AndroidSensingLib/libs/httpclient-cache-4.1.jar"/>
-	<classpathentry kind="lib" path="/mydata/android/workspace/AndroidSensingLib/libs/httpcore-4.1.jar"/>
-	<classpathentry kind="lib" path="/mydata/android/workspace/AndroidSensingLib/libs/httpmime-4.1.jar"/>
+	<classpathentry kind="lib" path="libs/Androidplot-core-0.4.3-release.jar"/>
+	<classpathentry kind="lib" path="libs/httpclient-4.1.jar"/>
+	<classpathentry kind="lib" path="libs/httpclient-cache-4.1.jar"/>
+	<classpathentry kind="lib" path="libs/httpcore-4.1.jar"/>
+	<classpathentry kind="lib" path="libs/httpmime-4.1.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
