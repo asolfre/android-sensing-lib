@@ -17,9 +17,9 @@ public class ExtFileLogger {
 	String CURRENT_LOGFILE_NAME;
 	//DateFormat filedateFormat = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss");
 	
-	public ExtFileLogger(String path){
-		newFileLogName();
+	public ExtFileLogger(String path, String fileName){
 		Path = path;
+		CURRENT_LOGFILE_NAME = fileName;
 	}
 	
 	public void newFileLogName(){
@@ -27,6 +27,10 @@ public class ExtFileLogger {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd_HHmmss");
         String ct = sdf.format(cal.getTime());
         CURRENT_LOGFILE_NAME = ct + ".log";
+	}
+	
+	public void setLogFileName(String Name){
+		CURRENT_LOGFILE_NAME = Name;
 	}
 	
     public void log(String logText) {

@@ -39,8 +39,8 @@ public class AccelReader implements SensorEventListener{
     	
     }
     
-    public void startReader(Context context, Listener listener, int duration){ // duration - ms
-    	SensingDuration = duration;
+    public void startReader(Context context, Listener listener, int callback_duration_ms){ // duration - ms
+    	SensingDuration = callback_duration_ms;
     	SensorListener = listener;
         // Obtain a reference to system-wide sensor event manager.
         mSensorManager = (SensorManager) context.getSystemService(Context.SENSOR_SERVICE);
