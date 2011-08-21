@@ -36,7 +36,12 @@ public class WifiScanService extends Service{
 
     @Override
     public void onCreate() {
-    	mlogger = new ExtFileLogger("/WifiScanExample");
+    	Calendar cal = Calendar.getInstance();
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd_HHmmss");
+        String ct = sdf.format(cal.getTime());
+        String fileName =  ct + ".log";
+        
+    	mlogger = new ExtFileLogger("/WifiScanExample",fileName);
     	
     	setwifi();
     }
