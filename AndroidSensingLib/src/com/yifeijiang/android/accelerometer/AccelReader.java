@@ -83,7 +83,9 @@ public class AccelReader implements SensorEventListener{
         allAcc.add(acc);        
         if ( ( System.currentTimeMillis() - SensingStart) > SensingDuration) {
         	SensorListener.onReadComplete(allAcc);
-        	release();
+        	allAcc.clear();
+        	SensingStart = System.currentTimeMillis();
+        	//release();
         }
 		
 	}
