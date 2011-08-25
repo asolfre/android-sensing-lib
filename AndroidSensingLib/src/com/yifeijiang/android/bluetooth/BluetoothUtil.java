@@ -6,13 +6,14 @@ import android.content.Intent;
 
 public class BluetoothUtil {
 
-	public static void Enable(Context context){
+	public static void Enable(Context context, BluetoothAdapter mBluetoothAdapter){
 		
-		//if (!mBluetoothAdapter.isEnabled()) {
-	    Intent enableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-	    enableIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-	    context.startActivity(enableIntent);
-	    
+		if (!mBluetoothAdapter.isEnabled()) {
+		    Intent enableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+		    enableIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+		    context.startActivity(enableIntent);
+		}
+		
 	}
 	
 	public static void enableDiscoverable(Context context){
