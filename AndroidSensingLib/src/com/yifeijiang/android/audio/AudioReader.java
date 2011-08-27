@@ -107,6 +107,7 @@ public class AudioReader
                                          AudioFormat.ENCODING_PCM_16BIT) * 2;
 
             // Set up the audio input.
+            //TODO///////MediaRecorder.AudioSource.CAMCORDER
             audioInput = new AudioRecord(MediaRecorder.AudioSource.MIC,
                                          rate,
                                          AudioFormat.CHANNEL_CONFIGURATION_MONO,
