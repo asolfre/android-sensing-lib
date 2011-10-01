@@ -15,7 +15,8 @@ import android.util.Log;
 public class WifiScanner extends BroadcastReceiver{
 
 	
-
+	private boolean Continue = false;
+	private long ContinueSleep = 2000;
     private IntentFilter filterW;
     private PowerManager pm;
     private WifiManager wm;
@@ -54,7 +55,16 @@ public class WifiScanner extends BroadcastReceiver{
 		
         WifiManager wm = (WifiManager) context.getSystemService(Context.WIFI_SERVICE); 
         //if wifi is disabled;
+        //wm.setWifiEnabled(false);
         wm.setWifiEnabled(true);
+        //while (!wm.isWifiEnabled()){
+        //	try {
+		//		Thread.sleep(1000);
+		//	} catch (InterruptedException e) {
+		//		// TODO Auto-generated catch block
+		//		e.printStackTrace();
+		//	}
+        //}
         wm.startScan();
 	}
 	
@@ -68,7 +78,16 @@ public class WifiScanner extends BroadcastReceiver{
             List<ScanResult> scanResults = null;
             scanResults = w.getScanResults();
             long now = System.currentTimeMillis();
-            wifiListener.onScanComplete(now, scanResults);            
+            wifiListener.onScanComplete(now, scanResults);   
+            if ( Continue == true){
+            	try {
+					Thread.sleep(ContinueSleep);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+            	scanStart();
+            }
         }
 	}
 	
@@ -101,6 +120,11 @@ public class WifiScanner extends BroadcastReceiver{
     	scanStart();
     }
     
+    public void scanContinuously(long interval){
+    	Continue = true;
+    	ContinueSleep = interval;
+    	scanStart();
+    }
     
 	private class RefreshHandler extends Handler {
 		
