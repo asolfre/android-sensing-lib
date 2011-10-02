@@ -56,7 +56,8 @@ public class WifiScanner extends BroadcastReceiver{
         WifiManager wm = (WifiManager) context.getSystemService(Context.WIFI_SERVICE); 
         //if wifi is disabled;
         //wm.setWifiEnabled(false);
-        wm.setWifiEnabled(true);
+        if (wm.getWifiState() != WifiManager.WIFI_STATE_ENABLED)
+        	wm.setWifiEnabled(true);
         //while (!wm.isWifiEnabled()){
         //	try {
 		//		Thread.sleep(1000);
@@ -65,6 +66,7 @@ public class WifiScanner extends BroadcastReceiver{
 		//		e.printStackTrace();
 		//	}
         //}
+        
         wm.startScan();
 	}
 	

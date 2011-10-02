@@ -13,7 +13,7 @@ public class Preference {
     		return Value;
     	}
     	else{
-    		return null; 
+    		return ""; 
     	}
     	
 	}
