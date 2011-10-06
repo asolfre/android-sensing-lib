@@ -3,6 +3,8 @@ package com.yifeijiang.android.cloud;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpPost;
@@ -27,15 +29,15 @@ public class FileUploader {
 			DefaultHttpClient httpclient = new DefaultHttpClient();
             File f = new File(dir, filename);
 
-            HttpPost httpost = new HttpPost(url);
+            HttpPost httpost = new HttpPost( url );
             MultipartEntity entity = new MultipartEntity();
             entity.addPart("ALLDATA", new FileBody(f));
             httpost.setEntity(entity);
-
+            
             response = httpclient.execute(httpost);
 	        result = response.getStatusLine().toString();
 	        
-	        Log.d("httpPost", "Response: " + result);
+	        Log.d("Uploader", "Response: " + result);
 
             if (entity != null) {
                 entity.consumeContent();
@@ -43,9 +45,22 @@ public class FileUploader {
             
         } catch (Exception ex) {
             Log.d("Uploader", "Upload failed: " + ex.getMessage() + " Stacktrace: " + ex.getStackTrace());
+            String info = getErrorInfoFromException(ex);
+            Log.d("Uploader", info);
         }
         
         return result;
         
 	}
+	
+	public static String getErrorInfoFromException(Exception e) {  
+        try {  
+            StringWriter sw = new StringWriter();  
+            PrintWriter pw = new PrintWriter(sw);  
+            e.printStackTrace(pw);  
+            return "\r\n" + sw.toString() + "\r\n";  
+        } catch (Exception e2) {  
+            return "bad getErrorInfoFromException";  
+        }  
+    }  
 }
