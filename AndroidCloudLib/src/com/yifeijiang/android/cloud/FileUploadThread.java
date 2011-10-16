@@ -19,14 +19,16 @@ public class FileUploadThread extends Thread{
 	private String fileRegex;
 	private String url;
 	private boolean DELETE_UPLOADED;
+	private String Key;
 	
 	private File filePath;
 	
-	public FileUploadThread(String mpath, String mfileRegex, String murl, boolean mdeleteUploaded){
+	public FileUploadThread(String mpath, String mfileRegex, String murl, boolean mdeleteUploaded, String key){
 		path = mpath;
 		fileRegex = mfileRegex;
 		url = murl;
 		DELETE_UPLOADED = mdeleteUploaded;
+		Key = key;
 	}
 	public synchronized void run(){
     	
@@ -45,7 +47,7 @@ public class FileUploadThread extends Thread{
         	
         	if ( Pattern.matches(fileRegex, fn) ) {
         		
-        		String result = FileUploader.upload( filePath, fn, url );
+        		String result = FileUploader.upload( filePath, fn, url ,Key );
         		
         		
                 if (result.equals("HTTP/1.1 200 OK")) {

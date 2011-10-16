@@ -20,7 +20,7 @@ public class FileUploader {
 	
 	static public HttpResponse response;
 	
-	public static String upload(File dir, String filename, String url) {
+	public static String upload(File dir, String filename, String url, String Key) {
 		
 		String result = "";
 	        
@@ -31,7 +31,7 @@ public class FileUploader {
 
             HttpPost httpost = new HttpPost( url );
             MultipartEntity entity = new MultipartEntity();
-            entity.addPart("ALLDATA", new FileBody(f));
+            entity.addPart(Key, new FileBody(f));
             httpost.setEntity(entity);
             
             response = httpclient.execute(httpost);
