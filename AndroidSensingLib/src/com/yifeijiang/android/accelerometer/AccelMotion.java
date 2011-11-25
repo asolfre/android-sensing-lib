@@ -6,9 +6,73 @@ public class AccelMotion {
 	public  String readings = "";
 	private String logString = "";
 	ArrayList<ArrayList<Long>> allAcc = new ArrayList<ArrayList<Long>>();
+	ArrayList<ArrayList<Long>> AccSeq = new ArrayList<ArrayList<Long>>();
+	final int AccSeqLength = 5;
+	
 	public  int MOVE_FLAG = 3;
 	public  boolean MOVE_STATUS = false;
-	public  int Variance = 0;
+
+	
+	public void addAccel(long x, long y, long z){
+		ArrayList<Long> acc = new ArrayList<Long>();
+		acc.add(x);
+		acc.add(y);
+		acc.add(z);
+		
+		if (AccSeq.size()< AccSeqLength){
+			AccSeq.add(acc);
+		}
+		else{
+			
+			while ( AccSeq.size() >= AccSeqLength ){
+				AccSeq.remove(0);
+			}
+			AccSeq.add(acc);	
+		}
+	}
+	public boolean isStationary(){
+		
+		if (AccSeq.size()< AccSeqLength){
+			return false;
+		}
+		else{
+			
+			if ( getVariance() > 50 ){
+				return false;
+			}
+			else if ( getVariance() == -1 ){
+				return false;
+			}
+			else{
+				return true;
+			}
+			
+		}
+	}
+	
+	public int getVariance(){
+	   	ArrayList<Long> LastAcc = null;
+    	ArrayList<Long> curAcc = null;
+    	int Variance = 0;
+    	
+    	for(int i =0;i<AccSeq.size();i++){
+    		if (LastAcc == null) LastAcc = AccSeq.get(i);
+    		else{
+    			curAcc = AccSeq.get(i);
+    			for (int j =0; j<3;j++)
+    				Variance += Math.abs(curAcc.get(j)- LastAcc.get(j));
+    		}
+    	} 
+
+    	/////////////
+    	if (AccSeq.size()>0)
+    		Variance = Variance/AccSeq.size()/3;
+    	else
+    		Variance = -1;
+    	
+    	return Variance;
+	}
+	
 	
 	public boolean getMotion(ArrayList<ArrayList<Long>> accelerationSet){
     	int m = Move();
@@ -31,7 +95,7 @@ public class AccelMotion {
     	
     	ArrayList<Long> LastAcc = null;
     	ArrayList<Long> curAcc = null;
-    	Variance = 0;
+    	int Variance = 0;
     	
     	for(int i =0;i<allAcc.size();i++){
     		if (LastAcc == null) LastAcc = allAcc.get(i);
