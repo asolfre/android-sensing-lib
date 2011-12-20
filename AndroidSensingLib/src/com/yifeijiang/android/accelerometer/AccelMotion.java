@@ -50,6 +50,30 @@ public class AccelMotion {
 		}
 	}
 	
+	public int getSqVariance(){
+	   	ArrayList<Long> LastAcc = null;
+    	ArrayList<Long> curAcc = null;
+    	int Variance = 0;
+    	
+    	for(int i =0;i<AccSeq.size();i++){
+    		if (LastAcc == null) LastAcc = AccSeq.get(i);
+    		else{
+    			curAcc = AccSeq.get(i);
+    			for (int j =0; j<3;j++)
+    				Variance += Math.abs(curAcc.get(j)- LastAcc.get(j));
+    		}
+    	} 
+
+    	/////////////
+    	if (AccSeq.size()>0)
+    		Variance = Variance/AccSeq.size()/3;
+    	else
+    		Variance = -1;
+    	
+    	return Variance;
+	}
+	
+	
 	public int getVariance(){
 	   	ArrayList<Long> LastAcc = null;
     	ArrayList<Long> curAcc = null;
