@@ -30,6 +30,7 @@ public class FileUploadThread extends Thread{
 		DELETE_UPLOADED = mdeleteUploaded;
 		Key = key;
 	}
+	
 	public synchronized void run(){
     	
     	
@@ -48,67 +49,12 @@ public class FileUploadThread extends Thread{
         	if ( Pattern.matches(fileRegex, fn) ) {
         		
         		String result = FileUploader.upload( filePath, fn, url ,Key );
-        		
-        		
-                if (result.equals("HTTP/1.1 200 OK")) {
-                	
-                    File oldName = new File(filePath, fn);
-                    if ( DELETE_UPLOADED ){
-                    	oldName.delete();
-                    }
-                    else{
-                    	File newName = new File( filePath, "uploaded." + fn );
-                    	oldName.renameTo(newName);
-                    }
-                }
-                else if (result.equalsIgnoreCase( "HTTP/1.1 500 INTERNAL SERVER ERROR" )){
-                	
-                    //File oldName = new File(filePath, fn );
-                    //File newName = new File(filePath, "error."+fn );
-                    //oldName.renameTo(newName);    
-                    errorLog( fn );
-                    
-                }
-                else{
-                	errorLog( fn );
-                }
+        		FileUploader.processResult(result, filePath, fn, DELETE_UPLOADED);
                 
         	}
         	
         }
 	}
 	
-	private void errorLog(String fn){
-		String returnErrInfo = "";
-		if (FileUploader.response == null){
-			returnErrInfo = "NO Response";
-		}
-		else{
-			try {
-					returnErrInfo = EntityUtils.toString(FileUploader.response.getEntity());
-				} catch (ParseException e1) {
-					e1.printStackTrace();
-				} catch (IOException e1) {
-					e1.printStackTrace();
-				}
-		}
-		
-   		try {
-   			
-			File extFile = new File(filePath , fn + "_error_log_" + nowFileFormat()+ ".html");
-			FileWriter fw = new FileWriter(extFile, false);
-			fw.write( returnErrInfo );
-			fw.close();
-			
-        } catch (IOException e) {
-            //Log.e(TAG, "Failed to create dirs");
-        }
-	}
-	
-	private String nowFileFormat(){
-        Calendar cal = Calendar.getInstance();
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd_HHmmss");
-        String ct = sdf.format(cal.getTime());
-        return ct;
-	}
+
 }

@@ -1,14 +1,21 @@
 package com.yifeijiang.android.cloud;
 
 import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 
 import org.apache.http.HttpResponse;
+import org.apache.http.ParseException;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.mime.MultipartEntity;
 import org.apache.http.entity.mime.content.FileBody;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.util.EntityUtils;
+
 import android.util.Log;
 
 public class FileUploader {
@@ -47,6 +54,70 @@ public class FileUploader {
         return result;
         
 	}
+	
+	public static boolean processResult(String result,File dir, String fn, boolean DELETE_UPLOADED){
+		
+        if (result.equals("HTTP/1.1 200 OK")) {
+        	
+            File oldName = new File(dir, fn);
+            if ( DELETE_UPLOADED ){
+            	oldName.delete();
+            }
+            else{
+            	File newName = new File( dir, "uploaded." + fn );
+            	oldName.renameTo(newName);
+            }
+        }
+        else if (result.equalsIgnoreCase( "HTTP/1.1 500 INTERNAL SERVER ERROR" )){
+        	
+            //File oldName = new File(filePath, fn );
+            //File newName = new File(filePath, "error."+fn );
+            //oldName.renameTo(newName);    
+            errorLog( dir, fn );
+            
+        }
+        else{
+        	errorLog( dir,fn );
+        }
+        
+		return true;
+	}
+	
+	private static void errorLog(File dir,String fn){
+		String returnErrInfo = "";
+		if (FileUploader.response == null){
+			returnErrInfo = "NO Response";
+		}
+		else{
+			try {
+					returnErrInfo = EntityUtils.toString(FileUploader.response.getEntity());
+				} catch (ParseException e1) {
+					e1.printStackTrace();
+				} catch (IOException e1) {
+					e1.printStackTrace();
+				}
+		}
+		
+   		try {
+   			
+			File extFile = new File(dir , fn + "_error_log_" + nowFileFormat()+ ".html");
+			FileWriter fw = new FileWriter(extFile, false);
+			fw.write( returnErrInfo );
+			fw.close();
+			
+        } catch (IOException e) {
+            //Log.e(TAG, "Failed to create dirs");
+        }
+	}
+	
+	private static String nowFileFormat(){
+        Calendar cal = Calendar.getInstance();
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd_HHmmss");
+        String ct = sdf.format(cal.getTime());
+        return ct;
+	}
+	
+	
 	
 	public static String getErrorInfoFromException(Exception e) {  
         try {  
