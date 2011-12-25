@@ -175,15 +175,15 @@ public class ExtFileLogger {
         }
         if ( mExternalStorageAvailable & mExternalStorageWriteable) {
             try {
-                extPath = new File(Environment.getExternalStorageDirectory().getCanonicalPath() + path);
+                extPath = new File(Environment.getExternalStorageDirectory().getCanonicalPath() +"/"+ path);
                 extPath.mkdirs();
             } catch (IOException e) {
-                //Log.e(TAG, "Failed to create dirs");
+                Log.e(TAG, "Failed to create dirs");
             }
             extWritable = true;
         } else {
             extWritable = false;
-            //Log.d(TAG, "External media not available");
+            Log.d(TAG, "External media not available");
         }
         
         return extWritable;
