@@ -17,15 +17,15 @@ import android.util.Log;
 public class ExtFileLogger {
 	String TAG = "RoomLoc:FileLogger";
 	
-	private String strPath;
-	private File extFile;
-	private File extPath;
-	private String CURRENT_LOGFILE_NAME;
+	private String str_external_dir;
+	private File file_external_file;
+	private File file_external_path;
+	private String current_logfile_name;
 	private Context context;
 	//DateFormat filedateFormat = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss");
 	
 	public ExtFileLogger(Context ctx, String path){
-		strPath = path;
+		str_external_dir = path;
 		context = ctx;
 		newFileLogName();
 	}
@@ -38,13 +38,13 @@ public class ExtFileLogger {
 	}
 	
 	public void setLogFileName(String Name){
-		CURRENT_LOGFILE_NAME = Name;
-		compressIntFiles2Ext();
+		current_logfile_name = Name;
+		//compressIntFiles2Ext();
 	}
 	
     public void logExt(String logText) {
     	String logStr = logText + "\n"; 
-    	writeExtFile(logStr, CURRENT_LOGFILE_NAME);
+    	writeExtFile(logStr, current_logfile_name);
     }
     public void logInt(String s){
     	String logStr = s + "\n"; 
@@ -67,10 +67,10 @@ public class ExtFileLogger {
     
     
     private synchronized void compressIntFiles2Ext() {
-    	if (!isExtStorageWritable(strPath))
+    	if (!isExtStorageWritable(str_external_dir))
     		return;
         try {
-			extPath = new File(Environment.getExternalStorageDirectory().getCanonicalPath() + "/"+ strPath);
+			file_external_path = new File(Environment.getExternalStorageDirectory().getCanonicalPath() + "/"+ str_external_dir);
 		} catch (IOException e) {
 			return;
 		}
@@ -80,17 +80,17 @@ public class ExtFileLogger {
         int listLen = filelist.length;
         for (int i = 0; i < listLen; i++) {
             filename = filelist[i];
-            if ( filename.equals(CURRENT_LOGFILE_NAME)){
+            if ( filename.equals(current_logfile_name)){
             	continue;
             }
             
-            if ( isExtStorageWritable(strPath)) {
+            if ( isExtStorageWritable(str_external_dir)) {
             //if (extWritable) {
                 try {
                     // Create the GZIP output stream
                     String gzFilename = filename +  ".gz";
 
-                    GZIPOutputStream out = new GZIPOutputStream(new FileOutputStream(new File(extPath, gzFilename)));
+                    GZIPOutputStream out = new GZIPOutputStream(new FileOutputStream(new File(file_external_path, gzFilename)));
 
                     // Open the input file
                     FileInputStream in = new FileInputStream(new File(context.getFilesDir(),filename));
@@ -123,10 +123,10 @@ public class ExtFileLogger {
     private synchronized void writeFlash(String s){
         FileOutputStream fos = null;
         try {
-            fos = context.openFileOutput(CURRENT_LOGFILE_NAME, Context.MODE_APPEND);
+            fos = context.openFileOutput(current_logfile_name, Context.MODE_APPEND);
             //Log.d(TAG, "Opened file " + FILENAME);
         } catch (FileNotFoundException e) {
-            Log.d(TAG, "Unable to open file " + CURRENT_LOGFILE_NAME);
+            Log.d(TAG, "Unable to open file " + current_logfile_name);
         }
         try {
             if (fos != null) {
@@ -135,18 +135,18 @@ public class ExtFileLogger {
                 //Log.d(TAG, "Wrote to file " + FILENAME);
             }
         } catch (IOException e) {
-            Log.d(TAG, "Unable to write to file " + CURRENT_LOGFILE_NAME);
+            Log.d(TAG, "Unable to write to file " + current_logfile_name);
         }
     }
     
     
     private synchronized void writeExtFile(String s, String FILENAME){
-    	if (!isExtStorageWritable(strPath))
+    	if (!isExtStorageWritable(str_external_dir))
     		return;
     	
 		try {
-			extFile = new File(Environment.getExternalStorageDirectory().getCanonicalPath() +"/"+ strPath ,FILENAME);
-			FileWriter fw = new FileWriter(extFile, true);
+			file_external_file = new File(Environment.getExternalStorageDirectory().getCanonicalPath() +"/"+ str_external_dir ,FILENAME);
+			FileWriter fw = new FileWriter(file_external_file, true);
 			fw.write(s);
 			fw.close();
 			
@@ -159,7 +159,7 @@ public class ExtFileLogger {
     	boolean extWritable;
     	boolean mExternalStorageAvailable;
     	boolean mExternalStorageWriteable;
-    	File extPath;
+    	File file_external_path;
         String state = Environment.getExternalStorageState();
         if (Environment.MEDIA_MOUNTED.equals(state)) {
             // We can read and write the media
@@ -175,8 +175,8 @@ public class ExtFileLogger {
         }
         if ( mExternalStorageAvailable & mExternalStorageWriteable) {
             try {
-                extPath = new File(Environment.getExternalStorageDirectory().getCanonicalPath() +"/"+ path);
-                extPath.mkdirs();
+                file_external_path = new File(Environment.getExternalStorageDirectory().getCanonicalPath() +"/"+ path);
+                file_external_path.mkdirs();
             } catch (IOException e) {
                 Log.e(TAG, "Failed to create dirs");
             }
