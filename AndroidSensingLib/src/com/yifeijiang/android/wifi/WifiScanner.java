@@ -122,12 +122,26 @@ public class WifiScanner extends BroadcastReceiver{
     	scanStart();
     }
     
+    public void delayedPeriodicScan(int sleepDuration, int delay){
+    	WiFi_SAMPLE_RATE = sleepDuration;
+    	PeriodicScan pscan = new PeriodicScan();
+    	pscan.removeMessages(0);
+    	pscan.sendMessageDelayed(pscan.obtainMessage(0), delay);
+    }
+    
     public void scanContinuously(long interval){
     	Continue = true;
     	ContinueSleep = interval;
     	scanStart();
     }
     
+    private class PeriodicScan extends Handler{
+	    @Override
+	    public void handleMessage(Message msg) {
+	    	periodicHandler.sleep( WiFi_SAMPLE_RATE );
+	    	scanStart();
+	    }    	
+    }
 	private class RefreshHandler extends Handler {
 		
 	    @Override
