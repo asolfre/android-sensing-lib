@@ -18,10 +18,7 @@ public class WifiScanner extends BroadcastReceiver{
 	private boolean Continue = false;
 	private long ContinueSleep = 2000;
     private IntentFilter filterW;
-    private PowerManager pm;
-    private WifiManager wm;
-    private PowerManager.WakeLock wl;
-    private WifiManager.WifiLock wifil;
+
  
     private int WiFi_SAMPLE_RATE = 30000;
     
@@ -96,25 +93,14 @@ public class WifiScanner extends BroadcastReceiver{
 	}
 	
 	
-	public void setPower(){
-		
-        pm = (PowerManager) context.getSystemService(Context.POWER_SERVICE);
-        wl = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "PowerManagerTag");
-        wl.acquire();
-        if (wl.isHeld())
-            Log.d("PowerManager","Lock Held");
-        wm = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
-        wifil = wm.createWifiLock(WifiManager.WIFI_MODE_SCAN_ONLY, "wifilock"); 
-        wifil.acquire();
-    }
+
     
 	
     public void release(){
     	
     	context.unregisterReceiver(this);
     	periodicHandler.removeMessages(0);
-        wl.release();
-        wifil.release();
+
     }
     
     
