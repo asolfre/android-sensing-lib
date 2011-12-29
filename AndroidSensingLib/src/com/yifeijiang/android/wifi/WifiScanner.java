@@ -29,6 +29,8 @@ public class WifiScanner extends BroadcastReceiver{
     private RefreshHandler periodicHandler;
 	private Context context;
 	
+	private boolean periodic_scan_status = true;
+	
     public static abstract class Listener {
     	
         public static final int ERR_OK = 0;
@@ -116,17 +118,26 @@ public class WifiScanner extends BroadcastReceiver{
     }
     
     
-    public void scanPeriodic(int sleepDuration){
+    private void scanPeriodic(int sleepDuration){
+    	if (periodic_scan_status == false)
+    		return;
+    	
     	WiFi_SAMPLE_RATE = sleepDuration;
     	periodicHandler.sleep( WiFi_SAMPLE_RATE );
     	scanStart();
     }
     
-    public void delayedPeriodicScan(int sleepDuration, int delay){
+    public void startPeriodicScan(int sleepDuration, int delay){
+    	periodic_scan_status = true;
     	WiFi_SAMPLE_RATE = sleepDuration;
     	PeriodicScan pscan = new PeriodicScan();
     	pscan.removeMessages(0);
     	pscan.sendMessageDelayed(pscan.obtainMessage(0), delay);
+    }
+    
+    public void stopPeriodicScan(){
+    	periodic_scan_status = false;
+    	periodicHandler.removeMessages(0);
     }
     
     public void scanContinuously(long interval){
