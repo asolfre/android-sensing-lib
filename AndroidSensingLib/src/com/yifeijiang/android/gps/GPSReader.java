@@ -55,6 +55,11 @@ public class GPSReader implements LocationListener,  GpsStatus.Listener{
 		
 		STATUS = "ON";
 	}
+	
+	public void stop(){
+		lm.removeUpdates(this);
+		STATUS = "OFF";
+	}
   
     public void release(){
     	

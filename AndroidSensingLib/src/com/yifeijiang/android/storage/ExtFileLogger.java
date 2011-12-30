@@ -6,9 +6,14 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.zip.GZIPOutputStream;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import android.content.Context;
 import android.os.Environment;
 import android.util.Log;
@@ -16,7 +21,7 @@ import android.util.Log;
 
 public class ExtFileLogger {
 	String TAG = "RoomLoc:FileLogger";
-	
+	DateFormat logdateFormat = new SimpleDateFormat("EEE MM,dd,yyyy HH:mm:ss");
 	private String str_external_dir;
 	private File file_external_file;
 	private File file_external_path;
@@ -49,6 +54,18 @@ public class ExtFileLogger {
     public void logInt(String s){
     	String logStr = s + "\n"; 
     	writeFlash(logStr);
+    }
+    public void logInt(JSONObject obj){
+        long now = System.currentTimeMillis();
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(now);
+        try {
+	        obj.put("CT", logdateFormat.format(calendar.getTime()) );
+	        obj.put("T", now );
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+		logInt(obj.toString());    	
     }
     public void compressInt2Ext(){
     	compressIntFiles2Ext();
