@@ -67,6 +67,7 @@ public class FileUploader {
             	File newName = new File( dir, "uploaded." + fn );
             	oldName.renameTo(newName);
             }
+            return true;
         }
         else if (result.equalsIgnoreCase( "HTTP/1.1 500 INTERNAL SERVER ERROR" )){
         	
@@ -74,13 +75,14 @@ public class FileUploader {
             //File newName = new File(filePath, "error."+fn );
             //oldName.renameTo(newName);    
             errorLog( dir, fn );
-            
+            return false;
         }
         else{
         	errorLog( dir,fn );
+        	return false;
         }
         
-		return true;
+		
 	}
 	
 	private static void errorLog(File dir,String fn){

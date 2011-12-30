@@ -26,6 +26,10 @@ public class PeriodicUpload {
 	        }		
 	};
 	
+	
+	
+
+    
 	public PeriodicUpload( Context ctx, Upload up ){
 		upload_listener = up;
 		context = ctx;
@@ -43,10 +47,13 @@ public class PeriodicUpload {
 	
 	public void release(){
 		upload_handler.removeMessages(0);
+		if (wifil.isHeld())
+			wifil.release();
 	}
 	
 	private void upload(){
 		wifil.acquire();
+		wm.reassociate();
 		wm.reconnect();
 		wake_wifi.sendMessageDelayed(wake_wifi.obtainMessage(0), 60*1000);
 		
