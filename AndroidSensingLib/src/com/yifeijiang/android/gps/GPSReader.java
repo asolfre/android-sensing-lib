@@ -29,7 +29,7 @@ public class GPSReader implements LocationListener,  GpsStatus.Listener{
         public static final int ERR_INIT_FAILED = 1;
         public static final int ERR_READ_FAILED = 2;
 
-        public abstract void onReadComplete(double latitude, double longitude, double accuracy);
+        public abstract void onReadComplete(double latitude, double longitude, double accuracy, long t);
         public abstract void onReadError(int error);
     }
     
@@ -99,7 +99,8 @@ public class GPSReader implements LocationListener,  GpsStatus.Listener{
 		double latitude = location.getLatitude();
 		double longitude = location.getLongitude();
 		double accuracy = location.getAccuracy();
-		listener.onReadComplete(latitude, longitude, accuracy);
+		long t = location.getTime();
+		listener.onReadComplete(latitude, longitude, accuracy, t);
 		
 	}
 
