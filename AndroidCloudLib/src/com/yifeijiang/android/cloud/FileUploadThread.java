@@ -30,6 +30,7 @@ public class FileUploadThread extends Thread{
     	
         public abstract void onComplete(  );
         public abstract void onError(  );
+        public abstract void allDone();
         
     }
     
@@ -73,6 +74,7 @@ public class FileUploadThread extends Thread{
         	}
         	
         }
+        listener.allDone();
 	}
 	
 

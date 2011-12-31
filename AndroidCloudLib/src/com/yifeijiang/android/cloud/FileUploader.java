@@ -97,6 +97,8 @@ public class FileUploader {
 					e1.printStackTrace();
 				} catch (IOException e1) {
 					e1.printStackTrace();
+				} catch (Exception e){
+					
 				}
 		}
 		
