@@ -57,7 +57,7 @@ public class FileUploader {
 	
 	public static boolean processResult(String result,File dir, String fn, boolean DELETE_UPLOADED){
 		
-        if (result.equals("HTTP/1.1 200 OK")) {
+        if (result.contains("HTTP/1.1 2")) {
         	
             File oldName = new File(dir, fn);
             if ( DELETE_UPLOADED ){
@@ -69,7 +69,7 @@ public class FileUploader {
             }
             return true;
         }
-        else if (result.equalsIgnoreCase( "HTTP/1.1 500 INTERNAL SERVER ERROR" )){
+        else if (result.contains( "HTTP/1.1 5" )){
         	
             //File oldName = new File(filePath, fn );
             //File newName = new File(filePath, "error."+fn );
