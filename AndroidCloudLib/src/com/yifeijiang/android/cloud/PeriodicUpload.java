@@ -20,7 +20,11 @@ public class PeriodicUpload {
 	Handler wake_wifi = new Handler(){
 	       @Override
 	        public void handleMessage(Message msg) {
-	    	   
+	       	upload_thread = new FileUploadThread(
+	    			upload_path, 
+	    			upload_fileregex,
+	    			upload_url, 
+	    			upload_deleteuploaded , upload_key ,upload_thread_listener);
 	    	   upload_thread.start();
 	    	   loop_upload_handler.sleep(interval);
 	        }		
@@ -29,10 +33,17 @@ public class PeriodicUpload {
 	FileUploadThread upload_thread;
 	FileUploadThread.Listener upload_thread_listener;
 	
+	String upload_path;
+	String upload_fileregex; 
+	String upload_url;
+	boolean upload_deleteuploaded; 
+	String upload_key;
+	
     public static abstract class Listener {
     	
         public abstract void onComplete( );
         public abstract void onError( );
+        public abstract void newLog();
         
     }
     
@@ -46,6 +57,11 @@ public class PeriodicUpload {
 		listener = lsn;
 		context = ctx;
 		
+		upload_path = mpath;
+		upload_fileregex = mfileRegex; 
+		upload_url = murl;
+		upload_deleteuploaded = mdeleteUploaded; 
+		upload_key = key;		
 		
 		loop_upload_handler = new UploadHandler();
 		
@@ -68,16 +84,13 @@ public class PeriodicUpload {
 
 			@Override
 			public void allDone() {
-				wifil.release();
+				if (wifil.isHeld())
+					wifil.release();
 				
 			}
     		
     	};
-    	upload_thread = new FileUploadThread(
-   	 			"MAQS-Loc", 
-   	 			"^(orignal.).+.+(\\.gz)$",
-   			    "http://car.colorado.edu:443/uploadfile", 
-   			    false , "ALLDATA",upload_thread_listener);
+
     	
 		
 	}
@@ -107,6 +120,7 @@ public class PeriodicUpload {
 
         @Override
         public void handleMessage(Message msg) {
+        	listener.newLog();
         	upload();
         	
         }
