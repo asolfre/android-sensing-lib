@@ -56,7 +56,7 @@ public class FileUploader {
 	}
 	
 	public static boolean processResult(String result,File dir, String fn, boolean DELETE_UPLOADED){
-		
+		Log.d("UPLOAD", result);
         if (result.contains("HTTP/1.1 2")) {
         	
             File oldName = new File(dir, fn);
