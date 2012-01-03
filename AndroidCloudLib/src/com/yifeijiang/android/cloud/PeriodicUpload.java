@@ -6,29 +6,19 @@ import android.net.wifi.WifiManager;
 import android.os.Handler;
 import android.os.Message;
 import android.os.PowerManager;
+import android.util.Log;
 
 public class PeriodicUpload {
-	UploadHandler loop_upload_handler;
+	PeriodicUploadHandler loop_upload_handler;
 	Listener listener;
 	
 	int interval;
 	
-    private WifiManager wm;
-    private WifiManager.WifiLock wifil;
+    private WifiManager wifi_manager;
+    private WifiManager.WifiLock wifi_lock;
     Context context;
     
-	Handler wake_wifi = new Handler(){
-	       @Override
-	        public void handleMessage(Message msg) {
-	       	upload_thread = new FileUploadThread(
-	    			upload_path, 
-	    			upload_fileregex,
-	    			upload_url, 
-	    			upload_deleteuploaded , upload_key ,upload_thread_listener);
-	    	   upload_thread.start();
-	    	   loop_upload_handler.sleep(interval);
-	        }		
-	};
+	Handler upload_ready;
 	
 	FileUploadThread upload_thread;
 	FileUploadThread.Listener upload_thread_listener;
@@ -54,6 +44,7 @@ public class PeriodicUpload {
 			String murl, 
 			boolean mdeleteUploaded, 
 			String key ){
+		
 		listener = lsn;
 		context = ctx;
 		
@@ -63,34 +54,44 @@ public class PeriodicUpload {
 		upload_deleteuploaded = mdeleteUploaded; 
 		upload_key = key;		
 		
-		loop_upload_handler = new UploadHandler();
+		loop_upload_handler = new PeriodicUploadHandler();
 		
-        wm = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
-        wifil = wm.createWifiLock(WifiManager.WIFI_MODE_FULL, "wifilock"); 
+        wifi_manager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
+        wifi_lock = wifi_manager.createWifiLock(WifiManager.WIFI_MODE_FULL, "wifilockfull"); 
         
        	upload_thread_listener = new FileUploadThread.Listener(){
 
 			@Override
 			public void onComplete() {
 				listener.onComplete();
-				
 			}
-
 			@Override
 			public void onError() {
 				listener.onError();
-				
 			}
-
 			@Override
 			public void allDone() {
-				if (wifil.isHeld())
-					wifil.release();
-				
+				if (wifi_lock.isHeld()){
+					Log.d("UPLOAD", "wifi DISABLED");
+					wifi_lock.release();
+				}
 			}
     		
     	};
-
+    	
+    	upload_ready = new Handler(){
+ 	       @Override
+ 	        public void handleMessage(Message msg) {
+ 	    	   Log.d("UPLOAD", "wifi enabled");
+ 	    	   upload_thread = new FileUploadThread(
+ 	    			upload_path, 
+ 	    			upload_fileregex,
+ 	    			upload_url, 
+ 	    			upload_deleteuploaded , upload_key ,upload_thread_listener);
+ 	    	   upload_thread.start();
+ 	    	   loop_upload_handler.sleep(interval);
+ 	        }		
+ 	};
     	
 		
 	}
@@ -100,23 +101,19 @@ public class PeriodicUpload {
 		upload();
 	}
 	
-	public void release(){
-		loop_upload_handler.removeMessages(0);
-		if (wifil.isHeld())
-			wifil.release();
-	}
-	
+
 	private void upload(){
-		wifil.acquire();
-		//wm.reassociate();
-		wm.reconnect();
-		wake_wifi.sendMessageDelayed(wake_wifi.obtainMessage(0), 30*1000);
+		Log.d("UPLOAD", "enable wifi");
+		wifi_lock.acquire();
+		wifi_manager.reassociate();
+		wifi_manager.reconnect();
+		upload_ready.sendMessageDelayed(upload_ready.obtainMessage(0), 30*1000);
 		
 	}
 	
 
 	
-	class UploadHandler extends Handler {
+	private class PeriodicUploadHandler extends Handler {
 
         @Override
         public void handleMessage(Message msg) {
@@ -134,5 +131,10 @@ public class PeriodicUpload {
         
 	};
 
-    
+	public void release(){
+		loop_upload_handler.removeMessages(0);
+		if (wifi_lock.isHeld())
+			wifi_lock.release();
+	}
+	  
 }

@@ -20,93 +20,87 @@ import android.util.Log;
 
 public class FileUploader {
 	
-	static public HttpResponse response;
+	//static public HttpResponse response;
 	
-	public static String upload(File dir, String filename, String url, String Key) {
+	public  static boolean upload(File dir, String filename, String url, String Key, boolean DELETE_UPLOADED) {
+		HttpResponse response;
 		
-		String result = "";
-	        
+		DefaultHttpClient httpclient = new DefaultHttpClient();
+        File f = new File(dir, filename);
+
+        HttpPost httpost = new HttpPost( url );
+        MultipartEntity entity = new MultipartEntity();
+        entity.addPart(Key, new FileBody(f));
+        httpost.setEntity(entity);
+        
 		try {
-			
-			DefaultHttpClient httpclient = new DefaultHttpClient();
-            File f = new File(dir, filename);
-
-            HttpPost httpost = new HttpPost( url );
-            MultipartEntity entity = new MultipartEntity();
-            entity.addPart(Key, new FileBody(f));
-            httpost.setEntity(entity);
-            
             response = httpclient.execute(httpost);
-	        result = response.getStatusLine().toString();
-	        
-	        Log.d("Uploader", "Response: " + result);
-
-            if (entity != null) {
-                entity.consumeContent();
-            }
-            
         } catch (Exception ex) {
-            Log.d("Uploader", "Upload failed: " + ex.getMessage() + " Stacktrace: " + ex.getStackTrace());
+            Log.d("UPLOAD", "Upload failed: " + ex.getMessage() + " Stacktrace: " + ex.getStackTrace());
             String info = getErrorInfoFromException(ex);
-            Log.d("Uploader", info);
+            Log.d("UPLOAD", info);
+            errorLog(dir, filename, "NO RESPONSE!");
+            return false;
         }
         
-        return result;
+        String status_line = response.getStatusLine().toString();
+        String return_error_info = null; 
+		try {
+			return_error_info = EntityUtils.toString(response.getEntity());
+		} catch (ParseException e1) {
+			e1.printStackTrace();
+		} catch (IOException e1) {
+			e1.printStackTrace();
+		} catch (Exception e){
+			
+		}
+		
         
-	}
-	
-	public static boolean processResult(String result,File dir, String fn, boolean DELETE_UPLOADED){
-		Log.d("UPLOAD", result);
-        if (result.contains("HTTP/1.1 2")) {
+        if (entity != null) {
+            try {
+				entity.consumeContent();
+			} catch (UnsupportedOperationException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+            }
+        
+        Log.d("UPLOAD", "status_line >>> " + status_line);
+        Log.d("UPLOAD", "return_error_info >>> " + return_error_info);
+        
+        if (status_line.contains("HTTP/1.1 2") || return_error_info.equals("OK")) {
         	
-            File oldName = new File(dir, fn);
+            File oldName = new File(dir, filename);
             if ( DELETE_UPLOADED ){
             	oldName.delete();
             }
             else{
-            	File newName = new File( dir, "uploaded." + fn );
+            	File newName = new File( dir, "uploaded." + filename );
             	oldName.renameTo(newName);
             }
             return true;
         }
-        else if (result.contains( "HTTP/1.1 5" )){
-        	
-            //File oldName = new File(filePath, fn );
-            //File newName = new File(filePath, "error."+fn );
-            //oldName.renameTo(newName);    
-            errorLog( dir, fn );
+        else if (status_line.contains( "HTTP/1.1 5" )){
+            errorLog( dir, filename, return_error_info );
             return false;
         }
-        else{
-        	errorLog( dir,fn );
-        	return false;
+        else {
+            errorLog( dir, filename, return_error_info );
+            return false;
         }
-        
-		
 	}
 	
-	private static void errorLog(File dir,String fn){
-		String returnErrInfo = "";
-		if (FileUploader.response == null){
-			returnErrInfo = "NO Response";
-		}
-		else{
-			try {
-					returnErrInfo = EntityUtils.toString(FileUploader.response.getEntity());
-				} catch (ParseException e1) {
-					e1.printStackTrace();
-				} catch (IOException e1) {
-					e1.printStackTrace();
-				} catch (Exception e){
-					
-				}
-		}
+	private static void errorLog(File dir,String fn, String info){
+
 		
    		try {
    			
-			File extFile = new File(dir , fn + "_error_log_" + nowFileFormat()+ ".html");
+			File extFile = new File(dir.getAbsolutePath()+"/errorlog" , fn + "_error_log_" + nowFileFormat()+ ".html");
 			FileWriter fw = new FileWriter(extFile, false);
-			fw.write( returnErrInfo );
+			fw.write( info );
 			fw.close();
 			
         } catch (IOException e) {

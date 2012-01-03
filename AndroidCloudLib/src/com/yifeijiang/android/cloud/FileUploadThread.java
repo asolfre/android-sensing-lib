@@ -49,12 +49,15 @@ public class FileUploadThread extends Thread{
     	try {
     		filePath = new File(Environment.getExternalStorageDirectory().getCanonicalPath() + "/"+ path);
 		} catch (IOException e) {
+			listener.allDone();
 			return;
 		}
 		
         String filesname[] = filePath.list();
-        if ( filesname == null)
+        if ( filesname == null){
+        	listener.allDone();
         	return;
+        }
         	
         int fileNum = filesname.length;
         
@@ -63,8 +66,7 @@ public class FileUploadThread extends Thread{
         	
         	if ( Pattern.matches(fileRegex, fn) ) {
         		
-        		String result = FileUploader.upload( filePath, fn, url ,Key );
-        		boolean uploaded = FileUploader.processResult(result, filePath, fn, DELETE_UPLOADED);
+        		boolean uploaded = FileUploader.upload( filePath, fn, url ,Key , DELETE_UPLOADED);
                 if (uploaded){
                 	listener.onComplete();
                 }
