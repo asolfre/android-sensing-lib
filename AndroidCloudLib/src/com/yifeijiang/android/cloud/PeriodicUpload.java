@@ -105,9 +105,9 @@ public class PeriodicUpload {
 	private void upload(){
 		Log.d("UPLOAD", "enable wifi");
 		wifi_lock.acquire();
-		wifi_manager.reassociate();
+		//wifi_manager.reassociate();
 		wifi_manager.reconnect();
-		upload_ready.sendMessageDelayed(upload_ready.obtainMessage(0), 30*1000);
+		upload_ready.sendMessageDelayed(upload_ready.obtainMessage(0), 40*1000);
 		
 	}
 	
