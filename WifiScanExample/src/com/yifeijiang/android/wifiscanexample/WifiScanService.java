@@ -41,7 +41,7 @@ public class WifiScanService extends Service{
         String ct = sdf.format(cal.getTime());
         String fileName =  ct + ".log";
         
-    	mlogger = new ExtFileLogger("/WifiScanExample",fileName);
+    	mlogger = new ExtFileLogger(this.getApplicationContext(), "WifiScanExample");
     	
     	setwifi();
     }
@@ -88,13 +88,12 @@ public class WifiScanService extends Service{
              result = "{\"CT\":\"" + logdateFormat.format(calendar.getTime()) + "\",\"T\":" 
                          + epochTime + "," + result + "}";
              uiWifiScan = result;
-             mlogger.log(result);
+             mlogger.logExt(result);
      		}
      	};
          /////////////////////////////////////////////////////////
      	mwifi = new WifiScanner(this.getApplicationContext(), wifiListener);
-     	mwifi.setPower();
-     	mwifi.scanPeriodic(10000);
+
      }
   
 }
