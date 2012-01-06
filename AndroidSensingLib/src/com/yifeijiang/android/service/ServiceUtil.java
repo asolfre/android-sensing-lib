@@ -5,6 +5,7 @@ import java.util.List;
 
 import android.app.ActivityManager;
 import android.content.Context;
+import android.util.Log;
 
 public class ServiceUtil {
 	
@@ -17,7 +18,9 @@ public class ServiceUtil {
 	    Iterator <ActivityManager.RunningServiceInfo> iterator = runningServs.iterator();
 	    
 	    while (iterator.hasNext()) {
-	    	if (iterator.next().process.equals( serviceName )) {
+	    	String service_name = iterator.next().process;
+	    	//Log.d("service", service_name);
+	    	if (service_name.equals( serviceName )) {
 	    		return true;
 	    		} 
 	    	}
