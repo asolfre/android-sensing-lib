@@ -97,6 +97,8 @@ public class FileUploader {
 
 		
    		try {
+   			File file_external_path = new File(dir.getAbsolutePath()+"/errorlog" );
+   			file_external_path.mkdirs();
    			
 			File extFile = new File(dir.getAbsolutePath()+"/errorlog" , fn + "_error_log_" + nowFileFormat()+ ".html");
 			FileWriter fw = new FileWriter(extFile, false);
