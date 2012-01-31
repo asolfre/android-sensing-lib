@@ -41,23 +41,40 @@ public class WiFiSignalScanner extends BroadcastReceiver{
         context.registerReceiver(this, filterW);
 	}
 	
-	
+    public void startPeriodicScan(int sleepDuration){
+    	periodic_scan_status = true;
+    	scanPeriodic(sleepDuration);
+    }
+    
+    public void stopPeriodicScan(){
+    	periodic_scan_status = false;
+    	periodicHandler.removeMessages(0);
+    }
+    
+    public void startScanContinuously(long interval){
+    	Continue = true;
+    	ContinueSleep = interval;
+    	scanStart();
+    }
+    public void stopScanContinuously(){
+    	Continue = false;
+    }    
+    
+    public void release(){
+    	try{
+    	context.unregisterReceiver(this);}
+    	catch (Exception e) {
+			// TODO Auto-generated catch block
+		}
+    	periodicHandler.removeMessages(0);
+
+    }
+    
 	public void scanStart(){
 		
         WifiManager wm = (WifiManager) context.getSystemService(Context.WIFI_SERVICE); 
-        //if wifi is disabled;
-        //wm.setWifiEnabled(false);
         if (wm.getWifiState() != WifiManager.WIFI_STATE_ENABLED)
         	wm.setWifiEnabled(true);
-        //while (!wm.isWifiEnabled()){
-        //	try {
-		//		Thread.sleep(1000);
-		//	} catch (InterruptedException e) {
-		//		// TODO Auto-generated catch block
-		//		e.printStackTrace();
-		//	}
-        //}
-        
         wm.startScan();
 	}
 	
@@ -87,14 +104,6 @@ public class WiFiSignalScanner extends BroadcastReceiver{
 	
 
     
-	
-    public void release(){
-    	
-    	context.unregisterReceiver(this);
-    	periodicHandler.removeMessages(0);
-
-    }
-    
     
     private void scanPeriodic(int sleepDuration){
     	if (periodic_scan_status == false)
@@ -105,24 +114,7 @@ public class WiFiSignalScanner extends BroadcastReceiver{
     	scanStart();
     }
     
-    public void startPeriodicScan(int sleepDuration){
-    	periodic_scan_status = true;
-    	WiFi_SAMPLE_RATE = sleepDuration;
-    	periodicHandler.sleep( WiFi_SAMPLE_RATE );
-    	scanStart();
-    }
-    
-    public void stopPeriodicScan(){
-    	periodic_scan_status = false;
-    	periodicHandler.removeMessages(0);
-    }
-    
-    public void scanContinuously(long interval){
-    	Continue = true;
-    	ContinueSleep = interval;
-    	scanStart();
-    }
-    
+
 
 	private class RefreshHandler extends Handler {
 		
