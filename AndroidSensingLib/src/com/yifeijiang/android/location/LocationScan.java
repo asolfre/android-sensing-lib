@@ -33,14 +33,14 @@ public class LocationScan implements LocationListener,  GpsStatus.Listener{
 
 	public void start(){
 		
-	    //String provider = Settings.Secure.getString(context.getContentResolver(), 
-	    //        Settings.Secure.LOCATION_PROVIDERS_ALLOWED);
+	    String provider = Settings.Secure.getString(context.getContentResolver(), 
+	            Settings.Secure.LOCATION_PROVIDERS_ALLOWED);
 
-        //if(provider.contains("gps") == false) {
-        //	enableGPS(); // the GPS is already in the requested state
-        //}
+        if(provider.contains("gps") == false) {
+        	enableGPS(); // the GPS is already in the requested state
+        }
         if (STATUS == "OFF"){
-        	lm.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 5000, 1f, this);
+        	lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, 2000, 1f, this);
         	STATUS = "ON";
         }
 	}
@@ -57,7 +57,31 @@ public class LocationScan implements LocationListener,  GpsStatus.Listener{
     	
     }
     
-  
+    private void enableGPS( ){
+    	
+        String provider = Settings.Secure.getString(context.getContentResolver(), Settings.Secure.LOCATION_PROVIDERS_ALLOWED);
+
+        if(!provider.contains("gps")){
+            final Intent poke = new Intent();
+            poke.setClassName("com.android.settings", "com.android.settings.widget.SettingsAppWidgetProvider"); 
+            poke.addCategory(Intent.CATEGORY_ALTERNATIVE);
+            poke.setData(Uri.parse("3")); 
+            context.sendBroadcast(poke);
+        }    
+    }
+
+    private void disableGPS(){
+    	
+        String provider = Settings.Secure.getString(context.getContentResolver(), Settings.Secure.LOCATION_PROVIDERS_ALLOWED);
+
+        if(provider.contains("gps")){
+            final Intent poke = new Intent();
+            poke.setClassName("com.android.settings", "com.android.settings.widget.SettingsAppWidgetProvider");
+            poke.addCategory(Intent.CATEGORY_ALTERNATIVE);
+            poke.setData(Uri.parse("3")); 
+            context.sendBroadcast(poke);
+        }
+    }
 
 	@Override
 	public void onLocationChanged(Location location) {
