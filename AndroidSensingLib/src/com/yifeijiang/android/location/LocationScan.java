@@ -12,7 +12,7 @@ import android.provider.Settings;
 
 public class LocationScan implements LocationListener,  GpsStatus.Listener{
 
-	public static String STATUS = "OFF";
+	public String STATUS = "OFF";
 	
 	LocationManager lm;
 	String gpsdata = "";
@@ -25,10 +25,10 @@ public class LocationScan implements LocationListener,  GpsStatus.Listener{
     
 	public LocationScan(Context ctx, LocationScanListener lis){
 		
-		lm = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
+		
 		context = ctx;
 		listener = lis;
-		
+		lm = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
 	}
 
 	public void start(){
@@ -39,10 +39,10 @@ public class LocationScan implements LocationListener,  GpsStatus.Listener{
         //if(provider.contains("gps") == false) {
         //	enableGPS(); // the GPS is already in the requested state
         //}
-        
-		lm.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 5000, 1f, this);
-		
-		STATUS = "ON";
+        if (STATUS == "OFF"){
+        	lm.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 5000, 1f, this);
+        	STATUS = "ON";
+        }
 	}
 	
 	public void stop(){
