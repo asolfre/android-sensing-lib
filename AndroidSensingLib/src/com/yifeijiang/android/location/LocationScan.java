@@ -25,7 +25,6 @@ public class LocationScan implements LocationListener,  GpsStatus.Listener{
     
 	public LocationScan(Context ctx, LocationScanListener lis){
 		
-		
 		context = ctx;
 		listener = lis;
 		lm = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
@@ -89,7 +88,7 @@ public class LocationScan implements LocationListener,  GpsStatus.Listener{
 		double longitude = location.getLongitude();
 		double accuracy = location.getAccuracy();
 		long t = location.getTime();
-		listener.onReadComplete(latitude, longitude, accuracy, t);
+		listener.onLocationReadComplete(latitude, longitude, accuracy, t);
 		
 	}
 
