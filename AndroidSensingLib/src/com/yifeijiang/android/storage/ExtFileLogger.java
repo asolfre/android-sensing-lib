@@ -51,6 +51,12 @@ public class ExtFileLogger {
     	String logStr = logText + "\n"; 
     	writeExtFile(logStr, current_logfile_name);
     }
+    
+    public void logData(String logText) {
+    	String logStr = logText + "\n"; 
+    	writeDataFile(logStr, current_logfile_name);
+    }
+    
     public void logInt(String s){
     	String logStr = s + "\n"; 
     	writeFlash(logStr);
@@ -156,6 +162,24 @@ public class ExtFileLogger {
         }
     }
     
+    private synchronized void writeDataFile(String s, String FILENAME){
+        try {
+            file_external_path = new File(Environment.getDataDirectory().getCanonicalPath() +"/"+ str_external_dir);
+            file_external_path.mkdirs();
+        } catch (IOException e) {
+            Log.e(TAG, "Failed to create dirs");
+        }
+        
+		try {
+			file_external_file = new File(Environment.getDataDirectory().getCanonicalPath() +"/"+ str_external_dir ,FILENAME);
+			FileWriter fw = new FileWriter(file_external_file, true);
+			fw.write(s);
+			fw.close();
+			
+        } catch (IOException e) {
+            Log.e(TAG, "Failed to create files");
+        }
+    }
     
     private synchronized void writeExtFile(String s, String FILENAME){
     	if (!isExtStorageWritable(str_external_dir))
