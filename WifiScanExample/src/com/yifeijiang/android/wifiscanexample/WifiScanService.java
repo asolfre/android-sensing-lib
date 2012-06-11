@@ -7,19 +7,20 @@ import java.util.Iterator;
 import java.util.List;
 
 import com.yifeijiang.android.storage.ExtFileLogger;
-import com.yifeijiang.android.wifi.WifiScanner;
+import com.yifeijiang.android.wifi.WiFiSignalScanner;
+import com.yifeijiang.android.wifi.WiFiSignalScannerListener;
 
 import android.app.Service;
 import android.content.Intent;
 import android.net.wifi.ScanResult;
-import android.os.Handler;
 import android.os.IBinder;
-import android.os.Message;
 
-public class WifiScanService extends Service{
+public class WifiScanService extends Service implements WiFiSignalScannerListener{
 
-	WifiScanner mwifi;
-	WifiScanner.Listener wifiListener; 
+	WiFiSignalScanner mwifi;
+	WiFiSignalScannerListener wifiListener; 
+	
+	
 	public static String uiWifiScan = "None"; 
 	
 	
@@ -42,8 +43,7 @@ public class WifiScanService extends Service{
         String fileName =  ct + ".log";
         
     	mlogger = new ExtFileLogger(this.getApplicationContext(), "WifiScanExample");
-    	
-    	setwifi();
+    	mwifi = new WiFiSignalScanner(this, wifiListener);
     }
     
     @Override
@@ -57,43 +57,38 @@ public class WifiScanService extends Service{
     	
     }
     
-    private void setwifi(){
-        wifiListener = new WifiScanner.Listener() {
-     		
-     		@Override
-     		public void onScanError(int error) {
-     			// TODO Auto-generated method stub
-     			
-     		}
-     		
-     		@Override
-     		public void onScanComplete(long epochTime, List<ScanResult> scanResults) {
-                 String result = "\"WIFI\":{";
-                 Iterator<ScanResult> resultIterator = scanResults.iterator();
-                 if (resultIterator.hasNext()) {
-                     while (resultIterator.hasNext()) {
-                         ScanResult scanResult = resultIterator.next();
-                         result = result + "\"" + scanResult.BSSID + "\":" 
-                         			+ "\"" + scanResult.level + "\""
-                         			+ ",";
-                     }
-                     result = result.substring(0, result.length()-1) + "}";
-                 } else {
-                     result = result + "}";
-                 }
-             
-             Calendar calendar = Calendar.getInstance();
-             calendar.setTimeInMillis(epochTime);
-             
-             result = "{\"CT\":\"" + logdateFormat.format(calendar.getTime()) + "\",\"T\":" 
-                         + epochTime + "," + result + "}";
-             uiWifiScan = result;
-             mlogger.logExt(result);
-     		}
-     	};
-         /////////////////////////////////////////////////////////
-     	mwifi = new WifiScanner(this.getApplicationContext(), wifiListener);
 
-     }
+
+	@Override
+	public void onScanComplete(long epochTime, List<ScanResult> scanResults) {
+		// TODO Auto-generated method stub
+        String result = "\"WIFI\":{";
+        Iterator<ScanResult> resultIterator = scanResults.iterator();
+        if (resultIterator.hasNext()) {
+            while (resultIterator.hasNext()) {
+                ScanResult scanResult = resultIterator.next();
+                result = result + "\"" + scanResult.BSSID + "\":" 
+                			+ "\"" + scanResult.level + "\""
+                			+ ",";
+            }
+            result = result.substring(0, result.length()-1) + "}";
+        } else {
+            result = result + "}";
+        }
+    
+    Calendar calendar = Calendar.getInstance();
+    calendar.setTimeInMillis(epochTime);
+    
+    result = "{\"CT\":\"" + logdateFormat.format(calendar.getTime()) + "\",\"T\":" 
+                + epochTime + "," + result + "}";
+    uiWifiScan = result;
+    mlogger.logExt(result);
+	}
+
+	@Override
+	public void onScanError(int error) {
+		// TODO Auto-generated method stub
+		
+	}
   
 }
