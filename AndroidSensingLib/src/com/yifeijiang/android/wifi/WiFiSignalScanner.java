@@ -41,6 +41,14 @@ public class WiFiSignalScanner extends BroadcastReceiver{
         context.registerReceiver(this, filterW);
 	}
 	
+	public void registerReceiver(){
+		context.registerReceiver(this, filterW);
+	}
+	
+	public void unregisterReceiver(){
+		context.unregisterReceiver(this);
+	}
+	
     public void startPeriodicScan(int sleepDuration){
     	periodic_scan_status = true;
     	scanPeriodic(sleepDuration);
