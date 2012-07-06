@@ -28,38 +28,57 @@ public class ServerUploader{
 	String key;
 	
 	public ServerUploader(Context pContext, ServerUploaderListener pListener){
-		listener = pListener;
 		
+		listener = pListener;
 		
 	}
 	
 	public void upload(String pPath, String pFilename, String pUrl, String pKey){
+		filepath = pPath;
+		filename = pFilename;
+		url = pUrl;
+		key = pKey;
 		new UploadThread().start();
 	}
 	
 
 	private class UploadThread extends Thread{
+		String tfilepath;
+		String tfilename;
+		String turl;
+		String tkey;
+		
 		public synchronized void run(){
+			tfilepath = filepath;
+			tfilename = filename;
+			turl = url;
+			tkey= key;
+			
 			HttpResponse response;
 			
 			DefaultHttpClient httpclient = new DefaultHttpClient();
-	        File f = new File(filepath, filename);
+	        File f = new File(tfilepath, tfilename);
 
-	        HttpPost httpost = new HttpPost( url );
+	        HttpPost httpost = new HttpPost( turl );
 	        MultipartEntity entity = new MultipartEntity();
-	        entity.addPart(key, new FileBody(f));
+	        entity.addPart(tkey, new FileBody(f));
 	        httpost.setEntity(entity);
+	        
 	        
 			try {
 	            response = httpclient.execute(httpost);
 	        } catch (Exception ex) {
-	            Log.d("UPLOAD", "Upload failed: " + ex.getMessage() + " Stacktrace: " + ex.getStackTrace());
-	            String info = getErrorInfoFromException(ex);
-	            Log.d("UPLOAD", info);
-	            errorLog(filepath, filename, "NO RESPONSE!");
+	            //Log.d("UPLOAD", "Upload failed: " + ex.getMessage() + " Stacktrace: " + ex.getStackTrace());
+	            String ErrorMsg = ex.getMessage();
+	            //String ErrorStackTrace = ex.getStackTrace();
+	            String ErrorInfo = getErrorInfoFromException(ex);
+	            //Log.d("UPLOAD", info);
+	           // errorLog(filepath, filename, "NO RESPONSE!");
+	            listener.onUploadNetworkError(tfilepath, tfilename, turl, tkey,  ErrorMsg, ErrorInfo);
 	            return;
 	        }
 	        
+			
 	        String status_line = response.getStatusLine().toString();
 	        String return_error_info = null; 
 			try {
@@ -87,10 +106,12 @@ public class ServerUploader{
 	        
 	        Log.d("UPLOAD", "status_line >>> " + status_line);
 	        Log.d("UPLOAD", "return_error_info >>> " + return_error_info);
+	        listener.onUploadServerResponse(tfilepath, tfilename, turl, tkey, status_line, return_error_info);
 	        
+	        /*
 	        if (status_line.contains("HTTP/1.1 2") || return_error_info.equals("OK")) {
-	        	
-	            File oldName = new File(filepath, filename);
+	        	listener.onUploadSuccess(tfilepath, tfilename, turl, tkey);
+	            //File oldName = new File(filepath, filename);
 	            //if ( DELETE_UPLOADED ){
 	            //	oldName.delete();
 	            //}
@@ -101,14 +122,16 @@ public class ServerUploader{
 	            return;
 	        }
 	        else if (status_line.contains( "HTTP/1.1 5" )){
-	            errorLog( filepath, filename, return_error_info );
+	        	listener.onUploadServerError(tfilepath, tfilename, turl, tkey, return_error_info);
+	            //errorLog( tfilepath, tfilename, return_error_info );
 	            return;
 	        }
 	        else {
-	            errorLog( filepath, filename, return_error_info );
+	        	listener.onUploadServerError(tfilepath, tfilename, turl, tkey, return_error_info);
+	            //errorLog( tfilepath, tfilename, return_error_info );
 	            return;
 	        }
-
+*/
 		}		
 	}
 	
