@@ -68,11 +68,11 @@ public class ServerUploader{
 			try {
 	            response = httpclient.execute(httpost);
 	        } catch (Exception ex) {
-	            //Log.d("UPLOAD", "Upload failed: " + ex.getMessage() + " Stacktrace: " + ex.getStackTrace());
+	            Log.d("UPLOAD", "Upload failed: " + ex.getMessage() + " Stacktrace: " + ex.getStackTrace());
 	            String ErrorMsg = ex.getMessage();
 	            //String ErrorStackTrace = ex.getStackTrace();
 	            String ErrorInfo = getErrorInfoFromException(ex);
-	            //Log.d("UPLOAD", info);
+	            Log.d("UPLOAD", ErrorInfo);
 	           // errorLog(filepath, filename, "NO RESPONSE!");
 	            listener.onUploadNetworkError(tfilepath, tfilename, turl, tkey,  ErrorMsg, ErrorInfo);
 	            return;
@@ -84,11 +84,16 @@ public class ServerUploader{
 			try {
 				return_error_info = EntityUtils.toString(response.getEntity());
 			} catch (ParseException e1) {
+				String ErrorMsg = e1.getMessage();
+				listener.onUploadNetworkError(tfilepath, tfilename, turl, tkey,  ErrorMsg, "");
 				e1.printStackTrace();
 			} catch (IOException e1) {
+				String ErrorMsg = e1.getMessage();
+				listener.onUploadNetworkError(tfilepath, tfilename, turl, tkey,  ErrorMsg, "");
 				e1.printStackTrace();
 			} catch (Exception e){
-				
+				String ErrorMsg = e.getMessage();
+				listener.onUploadNetworkError(tfilepath, tfilename, turl, tkey,  ErrorMsg, "");
 			}
 			
 	        
